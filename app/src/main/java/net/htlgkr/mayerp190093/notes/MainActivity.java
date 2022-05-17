@@ -36,15 +36,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     ListView mListView;
     Button buttonAddGame;
     Button buttonSave;
-    private ArrayList<String> notes = new ArrayList<>();
-    private ArrayAdapter<String> mAdapter;
-
+    private List<Note> notes = new ArrayList<>();
+    NoteAdapter mAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         mListView = findViewById(R.id.listView);
         buttonAddGame = findViewById(R.id.buttonAddNote);
         buttonSave = findViewById(R.id.buttonSave);
-        mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,notes);
+        mAdapter = new NoteAdapter();
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
         readStorage();
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             LinearLayout layout = new LinearLayout(this);
             layout.setOrientation(LinearLayout.VERTICAL);
             alert.setTitle("Notiz umändern");
-            String[] arr = notes.get(info.position).split("");
+            String[] arr = notes.get(info.position).toString().split("");
             String datum = "";
             for (int i = 0; i < 17; i++) {
                 datum += arr[i];
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         "";
             }
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setMessage(notes.get(info.position));
+            alert.setMessage(notes.get(info.position).toString());
 
             alert.show();
             Toast.makeText(this,"Showing Details !" + name,Toast.LENGTH_SHORT).show();
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        notes.add(simpleDateFormat.format(noteDate) + " " + inputNote);
+        notes.add(new Note(noteDate,inputNote));
         mAdapter.notifyDataSetChanged();
         dialogInterface.cancel();
     }
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         notes.remove(pos);
-        notes.add(pos,simpleDateFormat.format(noteDate) + " " + inputNote);
+        notes.add(pos,new Note(noteDate,inputNote));
         mAdapter.notifyDataSetChanged();
         dialogInterface.cancel();
     }
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
     {
         String fileName = "notes.csv";
         for (int i = 0; i < notes.size(); i++) {
-            String input = notes.get(i);
+            String input = notes.get(i).toString();
             try {
                 FileOutputStream fos = openFileOutput(fileName,MODE_APPEND);
                 PrintWriter out = new PrintWriter(new OutputStreamWriter(fos));
@@ -249,13 +249,30 @@ public class MainActivity extends AppCompatActivity {
             while((line = in.readLine()) != null){
                 buffer.append(line);
             }
+            String datum = "";
+            String inputNote = "";
+
             String[] storage = buffer.toString().split(",");
-            notes.addAll(Arrays.asList(storage));
+            for (int i = 0; i < storage.length; i++) {
+                String[] arr = storage[i].split("");
+                for (int j = 0; j < 17; j++) {
+                    datum += arr[i];
+                }
+                for (int j = 17; j < arr.length; j++) {
+                    inputNote += arr[i];
+                }
+            }
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            Date d = null;
+            d= simpleDateFormat.parse(datum);
+            notes.add(new Note(d,inputNote));
             mAdapter.notifyDataSetChanged();
             in.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         }
     }
