@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         mListView = findViewById(R.id.listView);
         buttonAddGame = findViewById(R.id.buttonAddNote);
         buttonSave = findViewById(R.id.buttonSave);
-        mAdapter = new NoteAdapter();
+        mAdapter = new NoteAdapter(getApplicationContext(),R.layout.noteadapter,notes);
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
         readStorage();
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        notes.add(new Note(noteDate,inputNote));
+        notes.add(new Note(simpleDateFormat.format(noteDate),inputNote));
         mAdapter.notifyDataSetChanged();
         dialogInterface.cancel();
     }
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         notes.remove(pos);
-        notes.add(pos,new Note(noteDate,inputNote));
+        notes.add(pos,new Note(simpleDateFormat.format(noteDate), inputNote));
         mAdapter.notifyDataSetChanged();
         dialogInterface.cancel();
     }
@@ -265,7 +265,8 @@ public class MainActivity extends AppCompatActivity {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
             Date d = null;
             d= simpleDateFormat.parse(datum);
-            notes.add(new Note(d,inputNote));
+//            notes.add(new Note(simpleDateFormat.format(d), inputNote));
+            notes.add(new Note("11.12.2005 11:32","pablo"));
             mAdapter.notifyDataSetChanged();
             in.close();
         } catch (FileNotFoundException e) {

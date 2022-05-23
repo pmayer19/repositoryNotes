@@ -7,19 +7,19 @@ import java.util.Date;
 public class Note {
 
 
-    Date noteDate;
+    String noteDate;
     String noteMessage;
 
-    public Note(Date noteDate, String noteMessage) {
+    public Note(String noteDate, String noteMessage) {
         this.noteDate = noteDate;
         this.noteMessage = noteMessage;
     }
 
-    public Date getNoteDate() {
+    public String getNoteDate() {
         return noteDate;
     }
 
-    public void setNoteDate(Date noteDate) {
+    public void setNoteDate(String noteDate) {
         this.noteDate = noteDate;
     }
 
