@@ -59,6 +59,10 @@ public class NoteAdapter extends BaseAdapter {
             ((TextView) listItem.findViewById(R.id.textView)).setBackgroundColor(Color.GREEN);
 
         }
+        else
+        {
+            ((TextView) listItem.findViewById(R.id.textView)).setBackgroundColor(Color.TRANSPARENT);
+        }
 
         return listItem;
     }

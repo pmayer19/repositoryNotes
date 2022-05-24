@@ -17,7 +17,6 @@ public class Note {
         this.noteMessage = noteMessage;
     }
 
-
     public Date getNoteDate()
     {
         return noteDate;
