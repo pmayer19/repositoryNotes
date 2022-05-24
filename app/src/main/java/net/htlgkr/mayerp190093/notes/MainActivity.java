@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -56,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
         readStorage();
-        setUpAddButton();
-        setUpSaveButton();
     }
 
     @Override
@@ -70,6 +69,29 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreateContextMenu(menu, v, menuInfo);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.actionbarconfig,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id)
+        {
+            case R.id.addGame:
+                setUpAddButton();
+                break;
+            case R.id.save:
+                writeStorage();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
@@ -145,17 +167,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void setUpAddButton()
     {
-        buttonAddGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LinearLayout layout = new LinearLayout(view.getContext());
+                LinearLayout layout = new LinearLayout(this);
                 layout.setOrientation(LinearLayout.VERTICAL);
-                AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
                 alert.setTitle("Notiz hinzufügen");
-                EditText mTextViewDatum = new EditText(view.getContext());
+                EditText mTextViewDatum = new EditText(this);
                 mTextViewDatum.setHint("Datum eingeben(dd.MM.yyyy HH:mm");
                 layout.addView(mTextViewDatum);
-                EditText mTextViewNotiz = new EditText(view.getContext());
+                EditText mTextViewNotiz = new EditText(this);
                 mTextViewNotiz.setHint("Notiz eingeben");
                 layout.addView(mTextViewNotiz);
                 alert.setView(layout);
@@ -174,18 +193,8 @@ public class MainActivity extends AppCompatActivity {
                 });
                 alert.show();
             }
-        });
-    }
 
-    public void setUpSaveButton()
-    {
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                writeStorage();
-            }
-        });
-    }
+
 
 
     private void addNote(DialogInterface dialogInterface, EditText mTextViewDatum, EditText mTextViewNotiz) {
@@ -225,18 +234,19 @@ public class MainActivity extends AppCompatActivity {
     private void writeStorage()
     {
         String fileName = "notes.csv";
+        FileOutputStream fos = null;
+        try {
+            fos = openFileOutput(fileName,MODE_PRIVATE);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(fos));
         for (int i = 0; i < notes.size(); i++) {
             String input = notes.get(i).toString();
-            try {
-                FileOutputStream fos = openFileOutput(fileName,MODE_PRIVATE);
-                PrintWriter out = new PrintWriter(new OutputStreamWriter(fos));
-                out.println(input+",");
-                out.flush();
-                out.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            out.println(input+",");
+            out.flush();
         }
+        out.close();
     }
 
     private void readStorage()
