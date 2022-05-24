@@ -2,38 +2,30 @@ package net.htlgkr.mayerp190093.notes;
 
 import androidx.annotation.NonNull;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Note {
 
 
-    String noteDate;
+    Date noteDate;
     String noteMessage;
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
-    public Note(String noteDate, String noteMessage) {
+    public Note(Date noteDate, String noteMessage) {
         this.noteDate = noteDate;
         this.noteMessage = noteMessage;
     }
 
-    public String getNoteDate() {
+
+    public Date getNoteDate()
+    {
         return noteDate;
-    }
-
-    public void setNoteDate(String noteDate) {
-        this.noteDate = noteDate;
-    }
-
-    public String getNoteMessage() {
-        return noteMessage;
-    }
-
-    public void setNoteMessage(String noteMessage) {
-        this.noteMessage = noteMessage;
     }
 
     @Override
     public String toString() {
-        return noteDate + " " + noteMessage;
+        return simpleDateFormat.format(noteDate) + " " + noteMessage;
     }
 
 }

@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        notes.add(new Note(simpleDateFormat.format(noteDate),inputNote));
+        notes.add(new Note(noteDate,inputNote));
         mAdapter.notifyDataSetChanged();
         dialogInterface.cancel();
     }
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         notes.remove(pos);
-        notes.add(pos,new Note(simpleDateFormat.format(noteDate), inputNote));
+        notes.add(pos,new Note(noteDate, inputNote));
         mAdapter.notifyDataSetChanged();
         dialogInterface.cancel();
     }
@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < notes.size(); i++) {
             String input = notes.get(i).toString();
             try {
-                FileOutputStream fos = openFileOutput(fileName,MODE_APPEND);
+                FileOutputStream fos = openFileOutput(fileName,MODE_PRIVATE);
                 PrintWriter out = new PrintWriter(new OutputStreamWriter(fos));
                 out.println(input+",");
                 out.flush();
@@ -252,22 +252,23 @@ public class MainActivity extends AppCompatActivity {
             String datum = "";
             String inputNote = "";
 
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
             String[] storage = buffer.toString().split(",");
             for (int i = 0; i < storage.length; i++) {
                 String[] arr = storage[i].split("");
+                datum = "";
+                inputNote = "";
                 for (int j = 0; j < 17; j++) {
-                    datum += arr[i];
+                    datum += arr[j];
                 }
                 for (int j = 17; j < arr.length; j++) {
-                    inputNote += arr[i];
+                    inputNote += arr[j];
                 }
+                notes.add(new Note(simpleDateFormat.parse(datum),inputNote));
+                mAdapter.notifyDataSetChanged();
             }
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-            Date d = null;
-            d= simpleDateFormat.parse(datum);
-//            notes.add(new Note(simpleDateFormat.format(d), inputNote));
-            notes.add(new Note("11.12.2005 11:32","pablo"));
-            mAdapter.notifyDataSetChanged();
+
             in.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
