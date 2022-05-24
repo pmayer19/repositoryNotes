@@ -42,8 +42,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     ListView mListView;
-    Button buttonAddGame;
-    Button buttonSave;
+
     private List<Note> notes = new ArrayList<>();
     NoteAdapter mAdapter;
     @Override
@@ -51,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mListView = findViewById(R.id.listView);
-        buttonAddGame = findViewById(R.id.buttonAddNote);
-        buttonSave = findViewById(R.id.buttonSave);
         mAdapter = new NoteAdapter(getApplicationContext(),R.layout.noteadapter,notes);
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
