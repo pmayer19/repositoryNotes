@@ -3,8 +3,8 @@
 
     <item
         android:id="@+id/addGame"
-        android:title="add Game" />
+        android:title="ADD NOTE" />
     <item
         android:id="@+id/save"
-        android:title="save" />
+        android:title="SAVE" />
 </menu>

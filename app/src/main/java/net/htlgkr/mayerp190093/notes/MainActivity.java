@@ -261,17 +261,21 @@ public class MainActivity extends AppCompatActivity {
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
+
             String[] storage = buffer.toString().split(",");
             for (int i = 0; i < storage.length; i++) {
-                String[] arr = storage[i].split("");
+                String[] arr = storage[i].split(";");
                 datum = "";
                 inputNote = "";
-                for (int j = 0; j < 17; j++) {
-                    datum += arr[j];
+
+                for (int j = 0; j < arr.length; j = j+2) {
+                    datum = arr[j];
                 }
-                for (int j = 17; j < arr.length; j++) {
-                    inputNote += arr[j];
+
+                for (int j = 1; j < arr.length; j = j+2) {
+                    inputNote = arr[j];
                 }
+
                 notes.add(new Note(simpleDateFormat.parse(datum),inputNote));
                 mAdapter.notifyDataSetChanged();
             }

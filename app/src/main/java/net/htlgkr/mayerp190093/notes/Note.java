@@ -24,7 +24,7 @@ public class Note {
 
     @Override
     public String toString() {
-        return simpleDateFormat.format(noteDate) + " " + noteMessage;
+        return simpleDateFormat.format(noteDate) + "; " + noteMessage;
     }
 
 }
