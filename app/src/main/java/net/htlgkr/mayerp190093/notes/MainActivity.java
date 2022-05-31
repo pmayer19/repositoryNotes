@@ -271,7 +271,6 @@ public class MainActivity extends AppCompatActivity {
                 for (int j = 0; j < arr.length; j = j+2) {
                     datum = arr[j];
                 }
-
                 for (int j = 1; j < arr.length; j = j+2) {
                     inputNote = arr[j];
                 }
