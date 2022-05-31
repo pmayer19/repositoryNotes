@@ -3,9 +3,12 @@ package net.htlgkr.mayerp190093.notes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +23,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.w3c.dom.Text;
@@ -36,6 +40,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -164,17 +169,28 @@ public class MainActivity extends AppCompatActivity {
 
     public void setUpAddButton()
     {
+                final int[] datum = {0};
                 LinearLayout layout = new LinearLayout(this);
                 layout.setOrientation(LinearLayout.VERTICAL);
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
                 alert.setTitle("Notiz hinzufügen");
                 EditText mTextViewDatum = new EditText(this);
-                mTextViewDatum.setHint("Datum eingeben(dd.MM.yyyy HH:mm");
                 layout.addView(mTextViewDatum);
                 EditText mTextViewNotiz = new EditText(this);
                 mTextViewNotiz.setHint("Notiz eingeben");
                 layout.addView(mTextViewNotiz);
                 alert.setView(layout);
+                Calendar c = Calendar.getInstance();
+                int hour = c.get(Calendar.HOUR_OF_DAY);
+                int minute = c.get(Calendar.MINUTE);
+                alert.setNeutralButton("set Time", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        DialogFragment newFragment = new TimePickerFragment();
+                        newFragment.show(getSupportFragmentManager(),"timePicker");
+                        
+                    }
+                });
                 alert.setPositiveButton("add", new DialogInterface.OnClickListener() {
                     @SuppressLint("SimpleDateFormat")
                     @Override
@@ -189,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 alert.show();
+
             }
 
 
