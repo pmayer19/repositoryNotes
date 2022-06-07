@@ -7,4 +7,9 @@
     <item
         android:id="@+id/save"
         android:title="SAVE" />
+    <item
+        android:id="@+id/menu_preferences"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="Einstellungen"
+        />
 </menu>

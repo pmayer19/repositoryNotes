@@ -1,17 +1,22 @@
 package net.htlgkr.mayerp190093.notes;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -40,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.ref.ReferenceQueue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,16 +61,29 @@ public class MainActivity extends AppCompatActivity {
     private List<Note> notes = new ArrayList<>();
     NoteAdapter mAdapter;
     public boolean boxChecked = false;
+    private SharedPreferences prefs;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         mListView = findViewById(R.id.listView);
         mAdapter = new NoteAdapter(getApplicationContext(),R.layout.noteadapter,notes);
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
         readStorage();
+        showPrefs();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void showPrefs()
+    {
+        prefs.getAll()
+                .entrySet()
+                .stream()
+                .forEach(stringEntry -> Log.d("TAG",String.format(" %s --> %s", stringEntry.getKey(), stringEntry.getValue())));
     }
 
     @Override
@@ -84,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    private final static int RQ_PREFERENCES = 1;
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -95,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.save:
                 writeStorage();
                 break;
+            case R.id.menu_preferences:
+                Intent intent = new Intent(this,MySettingsActivity.class);
+                startActivityForResult(intent,RQ_PREFERENCES);
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -348,4 +373,6 @@ public class MainActivity extends AppCompatActivity {
         notes.get(pos).setBoxChecked(checkBox.isChecked());
         mAdapter.notifyDataSetChanged();
     }
+
+
 }
