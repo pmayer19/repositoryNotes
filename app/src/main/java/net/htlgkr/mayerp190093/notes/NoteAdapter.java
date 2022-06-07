@@ -3,10 +3,12 @@ package net.htlgkr.mayerp190093.notes;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -54,9 +56,19 @@ public class NoteAdapter extends BaseAdapter {
         View listItem = (view == null) ? inflater.inflate(this.layoutId,null) : view;
         ((TextView) listItem.findViewById(R.id.textView)).setText(note.toString());
 
-        if(note.getNoteDate().after(new Date()))
+        CheckBox checkBox = listItem.findViewById(R.id.checkBox);
+
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                note.setBoxChecked(checkBox.isChecked());
+                notifyDataSetChanged();
+            }
+        });
+
+        if(note.getNoteDate().before(new Date()))
         {
-            ((TextView) listItem.findViewById(R.id.textView)).setBackgroundColor(Color.GREEN);
+            ((TextView) listItem.findViewById(R.id.textView)).setBackgroundColor(Color.YELLOW);
 
         }
         else
@@ -64,6 +76,10 @@ public class NoteAdapter extends BaseAdapter {
             ((TextView) listItem.findViewById(R.id.textView)).setBackgroundColor(Color.TRANSPARENT);
         }
 
+        if(note.getBoxChecked() == true)
+        {
+            ((TextView) listItem.findViewById(R.id.textView)).setBackgroundColor(Color.GREEN);
+        }
         return listItem;
     }
 }

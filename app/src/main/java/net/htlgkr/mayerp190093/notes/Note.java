@@ -11,10 +11,12 @@ public class Note {
     Date noteDate;
     String noteMessage;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+    boolean boxChecked;
 
-    public Note(Date noteDate, String noteMessage) {
+    public Note(Date noteDate, String noteMessage,boolean boxChecked) {
         this.noteDate = noteDate;
         this.noteMessage = noteMessage;
+        this.boxChecked = boxChecked;
     }
 
     public Date getNoteDate()
@@ -27,4 +29,11 @@ public class Note {
         return simpleDateFormat.format(noteDate) + "; " + noteMessage;
     }
 
+    public boolean getBoxChecked() {
+        return boxChecked;
+    }
+
+    public void setBoxChecked(boolean boxChecked) {
+        this.boxChecked = boxChecked;
+    }
 }

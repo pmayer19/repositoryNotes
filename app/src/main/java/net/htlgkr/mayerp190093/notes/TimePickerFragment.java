@@ -3,6 +3,7 @@ package net.htlgkr.mayerp190093.notes;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
@@ -23,13 +24,12 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         final Calendar c = Calendar.getInstance();
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
-
-        return new TimePickerDialog(getActivity(),this,hour,minute, DateFormat.getDateInstance().isLenient());
+        return new TimePickerDialog(getActivity(),this,hour,minute,true);
     }
 
     @Override
-    public void onTimeSet(TimePicker timePicker, int i, int i1) {
-
+    public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+        Log.i("Selected time- " , hour + ":" + minute);
     }
 
     public int getHour() {
@@ -39,4 +39,5 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
     public int getMinute() {
         return minute;
     }
+
 }

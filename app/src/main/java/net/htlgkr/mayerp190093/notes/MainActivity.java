@@ -8,10 +8,12 @@ import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +21,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -50,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Note> notes = new ArrayList<>();
     NoteAdapter mAdapter;
+    public boolean boxChecked = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,28 +175,58 @@ public class MainActivity extends AppCompatActivity {
 
     public void setUpAddButton()
     {
-                final int[] datum = {0};
                 LinearLayout layout = new LinearLayout(this);
                 layout.setOrientation(LinearLayout.VERTICAL);
+                Button bsetDate = new Button(this);
+                bsetDate.setText("Datum hinzufügen");
+                Button bsetTime = new Button(this);
+                bsetTime.setText("Zeit hinzufügen");
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
                 alert.setTitle("Notiz hinzufügen");
+                 layout.addView(bsetDate);
+                 layout.addView(bsetTime);
                 EditText mTextViewDatum = new EditText(this);
                 layout.addView(mTextViewDatum);
                 EditText mTextViewNotiz = new EditText(this);
                 mTextViewNotiz.setHint("Notiz eingeben");
                 layout.addView(mTextViewNotiz);
+
                 alert.setView(layout);
                 Calendar c = Calendar.getInstance();
+                int year  =c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
                 int hour = c.get(Calendar.HOUR_OF_DAY);
                 int minute = c.get(Calendar.MINUTE);
-                alert.setNeutralButton("set Time", new DialogInterface.OnClickListener() {
+                final int[] yearS = new int[1];
+                final int[] monthS = new int[1];
+                final int[] dayS = new int[1];
+                bsetDate.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        DialogFragment newFragment = new TimePickerFragment();
-                        newFragment.show(getSupportFragmentManager(),"timePicker");
-                        
+                    public void onClick(View view) {
+                        DatePickerDialog newFragment = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                            mTextViewDatum.setText(day + "." + month + "." + year);
+                            dayS[0] = day;
+                            monthS[0] = month;
+                            yearS[0] = year;
+                        }},year,month,day);
+                        newFragment.show();
+                        }
+                    });
+                bsetTime.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        TimePickerDialog dialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+                                mTextViewDatum.setText(dayS[0] + "." + monthS[0] + "." + yearS[0] + " " + hour+":"+minute);
+                            }}, hour, minute, true);
+                        dialog.show();
                     }
                 });
+
                 alert.setPositiveButton("add", new DialogInterface.OnClickListener() {
                     @SuppressLint("SimpleDateFormat")
                     @Override
@@ -223,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        notes.add(new Note(noteDate,inputNote));
+        notes.add(new Note(noteDate,inputNote,boxChecked));
         mAdapter.notifyDataSetChanged();
         dialogInterface.cancel();
     }
@@ -240,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         notes.remove(pos);
-        notes.add(pos,new Note(noteDate, inputNote));
+        notes.add(pos,new Note(noteDate, inputNote,boxChecked));
         mAdapter.notifyDataSetChanged();
         dialogInterface.cancel();
     }
@@ -292,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
                     inputNote = arr[j];
                 }
 
-                notes.add(new Note(simpleDateFormat.parse(datum),inputNote));
+                notes.add(new Note(simpleDateFormat.parse(datum),inputNote,boxChecked));
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -304,5 +340,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public void onCheckBoxClicked(View view) {
+        CheckBox checkBox = (CheckBox) view;
+        int pos = mListView.getPositionForView(checkBox);
+        notes.get(pos).setBoxChecked(checkBox.isChecked());
+        mAdapter.notifyDataSetChanged();
     }
 }
