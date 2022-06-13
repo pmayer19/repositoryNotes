@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 <ListPreference
-    android:defaultValue="1100"
+    android:defaultValue="standard"
     android:entries="@array/colors"
     android:entryValues="@array/color_values"
     android:key="color"
-    android:summary="Farbauswahl der Anwendung"
+    android:summary="Farbauswahl der Acticity"
     android:title="Farbauswahl"
     />
+
 </PreferenceScreen>

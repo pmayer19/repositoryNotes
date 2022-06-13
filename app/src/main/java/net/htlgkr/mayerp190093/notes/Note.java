@@ -29,6 +29,10 @@ public class Note {
         return simpleDateFormat.format(noteDate) + "; " + noteMessage;
     }
 
+    public String toStringStorage() {
+        return simpleDateFormat.format(noteDate) + "<Message>" + noteMessage;
+    }
+
     public boolean getBoxChecked() {
         return boxChecked;
     }

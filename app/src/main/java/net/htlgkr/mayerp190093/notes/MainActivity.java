@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Application;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -53,6 +54,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,7 +63,10 @@ public class MainActivity extends AppCompatActivity {
     private List<Note> notes = new ArrayList<>();
     NoteAdapter mAdapter;
     public boolean boxChecked = false;
+
     private SharedPreferences prefs;
+    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -69,12 +74,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        preferenceChangeListener = (sharedPrefs,key) -> preferenceChanged(sharedPrefs,key);
+        prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
         mListView = findViewById(R.id.listView);
         mAdapter = new NoteAdapter(getApplicationContext(),R.layout.noteadapter,notes);
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
         readStorage();
-        showPrefs();
+    }
+
+    private void preferenceChanged(SharedPreferences sharedPrefs, String key) {
+        Map<String,?> allEntries = sharedPrefs.getAll();
+        String sValue = "";
+        View view = this.getWindow().getDecorView();
+        if(allEntries.get(key) instanceof String) {
+            sValue = sharedPrefs.getString(key,"");
+            switch (sValue) {
+                case "standard":
+                    view.setBackgroundColor(Color.WHITE);
+                    break;
+                case "blau":
+                    view.setBackgroundColor(Color.BLUE);
+                    break;
+                case "dunkelgrau":
+                    view.setBackgroundColor(Color.DKGRAY);
+                    break;
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -308,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void writeStorage()
     {
-        String fileName = "notes.csv";
+        String fileName = "notes.moa";
         FileOutputStream fos = null;
         try {
             fos = openFileOutput(fileName,MODE_PRIVATE);
@@ -317,8 +343,8 @@ public class MainActivity extends AppCompatActivity {
         }
         PrintWriter out = new PrintWriter(new OutputStreamWriter(fos));
         for (int i = 0; i < notes.size(); i++) {
-            String input = notes.get(i).toString();
-            out.println(input+",");
+            String input = notes.get(i).toStringStorage();
+            out.println(input+"<newNote>");
             out.flush();
         }
         out.close();
@@ -327,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
     private void readStorage()
     {
         try {
-            FileInputStream fis = openFileInput("notes.csv");
+            FileInputStream fis = openFileInput("notes.moa");
             BufferedReader in = new BufferedReader(new InputStreamReader(fis));
             String line;
             StringBuffer buffer = new StringBuffer();
@@ -340,9 +366,9 @@ public class MainActivity extends AppCompatActivity {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
 
-            String[] storage = buffer.toString().split(",");
+            String[] storage = buffer.toString().split("<newNote>");
             for (int i = 0; i < storage.length; i++) {
-                String[] arr = storage[i].split(";");
+                String[] arr = storage[i].split("<Message>");
                 datum = "";
                 inputNote = "";
 
@@ -367,12 +393,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onCheckBoxClicked(View view) {
-        CheckBox checkBox = (CheckBox) view;
-        int pos = mListView.getPositionForView(checkBox);
-        notes.get(pos).setBoxChecked(checkBox.isChecked());
-        mAdapter.notifyDataSetChanged();
-    }
 
 
 }
